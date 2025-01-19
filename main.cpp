@@ -47,8 +47,11 @@ public:
         QAction *quitAction = new QAction("Quit", this);
         connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
         trayMenu->addAction(quitAction);
-
-        trayIcon->setIcon(QIcon("icon.png")); // Replace with an actual icon path
+#ifdef __APPLE__
+                trayIcon->setIcon(QIcon("icon.png")); // Replace with an actual icon path
+#else
+        trayIcon->setIcon(QIcon("/Applications/talkingClock.app/Contents/MacOS/icon.png")); // Replace with an actual icon path
+#endif
         trayIcon->setContextMenu(trayMenu);
         trayIcon->setToolTip("Talking Clock");
         trayIcon->show();
