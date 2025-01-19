@@ -27,12 +27,12 @@ public:
         layout->addWidget(timeLabel);
 
         voiceSelector = new QComboBox(this);
-       // for (const QTextToSpeech::Voice &voice : tts->availableVoices()) {
-       //     voiceSelector->addItem(voice.name());
-       // }
-      //  connect(voiceSelector, &QComboBox::currentIndexChanged, this, &TalkingClock::changeVoice);
-        layout->addWidget(voiceSelector);
+        for (const QString &voice : tts->availableEngines()) {
+            voiceSelector->addItem(voice);
+        }
+        connect(voiceSelector, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &TalkingClock::changeVoice);
 
+        layout->addWidget(voiceSelector);
         setCentralWidget(centralWidget);
         setWindowTitle("Talking Clock");
         resize(300, 150);
@@ -42,12 +42,14 @@ public:
         timer.start(1000); // Update every second
         scheduleNextAnnouncement();
 
+        tts->setVolume(100);
+
         // Setup tray icon and menu
         QMenu *trayMenu = new QMenu();
         QAction *quitAction = new QAction("Quit", this);
         connect(quitAction, &QAction::triggered, qApp, &QCoreApplication::quit);
         trayMenu->addAction(quitAction);
-#ifdef __APPLE__
+#ifndef __APPLE__
                 trayIcon->setIcon(QIcon("icon.png")); // Replace with an actual icon path
 #else
         trayIcon->setIcon(QIcon("/Applications/talkingClock.app/Contents/MacOS/icon.png")); // Replace with an actual icon path
